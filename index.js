@@ -2,16 +2,9 @@ const express = require('express');
 const app = express();
 
 const { config } = require('./config/index');
-
-// app.get('/', (req, res)=> {
-//     res.send('Hello human')
-// });
-
-// app.get('/json', (req, res)=> {
-//     res.json({ hello: 'human' });
-// });
-
 const moviesApi = require('./routes/movies.js');
+
+app.use(express.json());//body parser
 
 moviesApi(app);
 
