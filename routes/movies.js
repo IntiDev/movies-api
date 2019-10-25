@@ -1,13 +1,31 @@
 const express = require('express');
-const { moviesMock } = require('../utils/mocks/movies');
+const MoviesService = require('../services/movies');
 
 const moviesApi = app => {
     const router = express.Router();
     app.use('/api/movies', router);
 
-    router.get('/:movieId', async (req, res, next) => {
+    const moviesService = new MoviesService();
+
+    router.get('/', async (req, res, next) => {
+        const { tags } = req.query;//Un query es cuando se pone el signo de ? el nombre del query y se puede concatenar.
+
         try {
-            const movies = await Promise.resolve(moviesMock[0]);
+            const movies = await moviesService.getMovies({ tags })
+            res.status(200).json({
+                data: movies,
+                message: 'movies listed'
+            });
+        } catch(err) {
+            next(err);
+        }
+    });
+
+    router.get('/:movieId', async (req, res, next) => {
+        const { movieId } = req.params;//La diferencia con el query es que los parametros están establecidos en la url.
+
+        try {
+            const movies = await moviesService.getMovies({ movieId })
             res.status(200).json({
                 data: movies,
                 message: 'movies retrieve'
@@ -18,8 +36,10 @@ const moviesApi = app => {
     });
 
     router.post('/', async (req, res, next) => {
+        const { body: movie } = req;
+
         try {
-            const createMovieId = await Promise.resolve(moviesMock[0].id);
+            const createMovieId = await moviesService.createMovie({ movie });
             res.status(201).json({
                 data: createMovieId,
                 message: 'movie created'
@@ -30,8 +50,11 @@ const moviesApi = app => {
     })
 
     router.put('/:movieId', async (req, res, next) => {
+        const { movieId } = req.params;
+        const { body: movie } = req;
+
         try {
-            const updatedMovieId = await Promise.resolve(moviesMock[0].id);
+            const updatedMovieId = await moviesService.updateMovie({ movieId, movie });
             res.status(200).json({
                 data: updatedMovieId,
                 message: 'movie updated'
@@ -42,8 +65,10 @@ const moviesApi = app => {
     })
 
     router.delete('/:movieId', async (req, res, next) => {
+        const { movieId } = req.params;
+
         try {
-            const deleteMovieId = await Promise.resolve(moviesMock[0].id);
+            const deleteMovieId = await moviesService.deletedMovie({ movieId });
             res.status(200).json({
                 data: deleteMovieId,
                 message: 'movie deleted'
