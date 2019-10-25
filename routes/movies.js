@@ -11,7 +11,9 @@ const moviesApi = app => {
         const { tags } = req.query;//Un query es cuando se pone el signo de ? el nombre del query y se puede concatenar.
 
         try {
-            const movies = await moviesService.getMovies({ tags })
+            const movies = await moviesService.getMovies({ tags });
+            throw new Error('Error getting movies');
+            
             res.status(200).json({
                 data: movies,
                 message: 'movies listed'
