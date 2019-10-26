@@ -14,4 +14,4 @@ function validationHandler(schema, check = 'body' ) {
     };
 }
 
-module.export = validationHandler;
+module.exports = validationHandler;
