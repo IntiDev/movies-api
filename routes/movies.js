@@ -6,7 +6,14 @@ const {
   createMovieSchema,
   updateMovieSchema
 } = require('../utils/schemas/movies');
+
 const validationHandler = require('../utils/middleware/validationHandler');
+
+const cacheResponse = require('../utils/cacheResponse');
+const {
+  FIVE_MINUTES_IN_SECONDS,
+  SIXTY_MINUTES_IN_SECONDS
+} = require('../utils/time');
 
 const moviesApi = app => {
   const router = express.Router();
@@ -15,6 +22,7 @@ const moviesApi = app => {
   const moviesService = new MoviesService();
 
   router.get('/', async (req, res, next) => {
+    cacheResponse(res, FIVE_MINUTES_IN_SECONDS);
     const { tags } = req.query; //Un query es cuando se pone el signo de ? el nombre del query y se puede concatenar.
 
     try {
@@ -34,6 +42,7 @@ const moviesApi = app => {
     '/:movieId',
     validationHandler({ movieId: movieIdSchema }, 'params'),
     async (req, res, next) => {
+        cacheResponse(res, SIXTY_MINUTES_IN_SECONDS);
       const { movieId } = req.params; //La diferencia con el query es que los parametros están establecidos en la url.
 
       try {
